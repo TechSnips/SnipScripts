@@ -1,0 +1,18 @@
+# check for existing SSH keys
+
+cd ~/.ssh
+ls -al
+
+# generate a new SSH key
+
+ssh-keygen -t rsa -b 4096 -C "bryce.m.mcdonald@gmail.com"
+
+# add your SSH key to SSH agent
+
+eval $(ssh-agent -s)
+
+ssh-add ~/.ssh/techsnips
+
+# copy SSH key to keyboard and add to GitHub account
+
+clip < ~/.ssh/techsnips.pub
