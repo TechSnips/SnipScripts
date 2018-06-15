@@ -10,6 +10,6 @@ for (<iterator> = <integer>; <expression to run while equals true>; <iterator in
     Write-Host $i
 }
 #>
-for ($i = 1; $i -lt 6; $i++) {
+for ($i = 4; $i -lt 10; $i++) {
 	Write-Host $i
 }

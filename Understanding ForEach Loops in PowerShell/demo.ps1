@@ -13,8 +13,8 @@ $paths = @('C:\Folder\file.txt', 'C:\Program Files\Folder2\file.txt', 'C:\Folder
 }
 #>
 
-foreach ($i in $paths) {
-	$i
+foreach ($path in $paths) {
+	$path
 }
 
 ## Do something

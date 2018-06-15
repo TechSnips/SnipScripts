@@ -28,7 +28,7 @@ $colorPicker[4]
 ## Find elements in an array
 $blueIndexNumber = $colorPicker.IndexOf('blue')
 $colorPicker[$blueIndexNumber]
-$colorPicker | Where-Object { $_ -eq 'blue' }
+$colorPicker | Where-Object -FilterScript { $_ -eq 'blue' }
 
 #endregion
 
@@ -62,4 +62,4 @@ $colorPicker.Remove('gray')
 
 ## unary operator to inspect arrays
 $colorPicker | Get-Member
-, $colorPicker | Get-Member
+,$colorPicker | Get-Member

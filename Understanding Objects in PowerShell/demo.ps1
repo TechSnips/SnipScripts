@@ -4,7 +4,6 @@
 #>
 
 #region Inspecting Object Properties
-
 $color = 'Red'
 $color
 
@@ -24,7 +23,6 @@ $color.Remove(1, 1)
 #endregion
 
 #region Types
-
 '1' | Get-Member
 1 | Get-Member
 $true | Get-Member
@@ -35,9 +33,9 @@ $int.GetType().Name
 
 #region Creating Your Own Objects
 
-$object = New-Object –TypeName PSObject
-$object | Add-Member –MemberType NoteProperty –Name OSBuild –Value 'OSBuild'
-$object | Add-Member –MemberType NoteProperty –Name OSVersion –Value 'Version'
+$object = New-Object -TypeName PSObject
+$object | Add-Member -MemberType NoteProperty -Name OSBuild -Value 'OSBuildffff'
+$object | Add-Member -MemberType NoteProperty -Name OSVersion -Value 'Versionffffrf'
 
 ## type accelerator
 $myFirstCustomObject = [pscustomobject]@{
