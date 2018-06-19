@@ -3,8 +3,7 @@
 ## Install-Module AzureRm
 
 ## Authenticate to your Azure subscription with the interactive prompt
-$subscription = Connect-AzureRmAccount
-$subscription
+Connect-AzureRmAccount -Subscription 'Visual Studio Premium with MSDN'
 
 ## Note the subscription and tenant IDs. We'll need those later. If you forget, you can always use Get-AzureRmASubscription.
 
@@ -24,6 +23,7 @@ New-AzureRmRoleAssignment -RoleDefinitionName Contributor -ServicePrincipalName 
 #endregion
 
 #region Authenticating with Add-AzureRmAccount
-$azureCred = Get-Credential
-Add-AzureRmAccount -ServicePrincipal -SubscriptionId $subscription.Id -TenantId $subscription.TenantId -Credential $azureCred
+$subscription = Get-AzureRmSubscription -SubscriptionName 'Visual Studio Premium with MSDN'
+$appCred = Get-Credential -UserName $myApp.ApplicationId -Message 'Azure AD Cred'
+Connect-AzureRmAccount -ServicePrincipal -SubscriptionId $subscription.SubscriptionId -Tenant $subscription.TenantId -Credential $appCred
 #endregion
