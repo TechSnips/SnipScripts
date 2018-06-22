@@ -89,7 +89,7 @@ Write-Log
 function Write-Log {
 	[CmdletBinding()]
 	param(
-		[Parameter()]
+		[Parameter(Mandatory)]
 		[pscustomobject]$Message,
         
 		[Parameter()]

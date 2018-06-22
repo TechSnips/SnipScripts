@@ -8,7 +8,7 @@
 #>
 
 ## Connect to remote web server
-$computerName = '137.116.51.152'
+$computerName = '40.70.25.104'
 $credential = Get-Credential
 Enter-PSSession -ComputerName $computerName -Credential $credential
 
@@ -18,9 +18,9 @@ Import-Module WebAdministration
 
 Get-Website -Name 'Default Web Site'
 
-Get-WebBinding -Name 'Default Web Site'
+Get-WebBinding -Name 'Default Web Site' | Select *
 
-Set-WebBinding -Name 'Default Web Site' -BindingInformation "*:80:" -PropertyName Port -Value 81
+Set-WebBinding -Name 'Default Web Site' -BindingInformation "*:85:" -PropertyName Port -Value 81
 
 Get-WebBinding -Name 'Default Web Site'
 (Get-Website -Name 'Default Web Site').bindings.Collection
@@ -102,7 +102,6 @@ New-IISWebBinding @parameters
 Invoke-Command -ComputerName $computerName -Credential $credential -ScriptBlock { Get-WebBinding -Name 'Default Web Site' }
 
 #endregion
-
 
 #region Putting it all together -- creating a custom function to change binding
 function Set-IISBinding {

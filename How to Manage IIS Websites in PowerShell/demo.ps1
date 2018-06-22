@@ -33,10 +33,10 @@ New-ItemProperty -Path "IIS:\Sites\AutomateBoringStuffAdvanced" -Name "bindings"
 #region Modifying existing websites
 
 ## Stopping/starting websites
-Get-Website –Name AutomateBoringStuff | Format-Table -AutoSize
+Get-Website -Name AutomateBoringStuff | Format-Table -AutoSize
 
 ## Obscure error message
-Get-Website –Name AutomateBoringStuff | Start-Website
+Get-Website -Name AutomateBoringStuffAdvanced | Start-Website
 
 ## Let's track down the conflicting binding
 
@@ -51,13 +51,13 @@ $site
 Set-ItemProperty -Path "IIS:\Sites\AutomateBoringStuff" -Name "bindings" -Value @{protocol="http"; bindingInformation="*:81:"}
 
 ## Site starts successfully now
-Get-Website –Name AutomateBoringStuff | Start-Website
+Get-Website -Name AutomateBoringStuff | Start-Website
 
 ## Changing the physical path
 Set-ItemProperty -Path "IIS:\Sites\AutomateBoringStuffAdvanced" -name "physicalPath" -value "C:\Sites\AutomateBoringStuffAdvanced\1.1"
 
 (Get-Website -Name AutomateBoringStuffAdvanced).physicalPath
-Get-Website –Name AutomateBoringStuffAdvanced | Start-Website
+Get-Website -Name AutomateBoringStuffAdvanced | Start-Website
 
 ## Changing logging settings
 $settings = @{
@@ -226,13 +226,12 @@ function New-IISWebsite {
 	}
 }
 
-## no app pool
-New-IISWebsite -Name Automate -ApplicationPoolName Automate -ComputerName $computerName -Credential $credential -Verbose
+New-IISWebsite -Name Automate -ApplicationPoolName Automate -ComputerName $computerName -Credential $credential -Verbose -Force
 
 ## Create the app pool
 Invoke-Command -ComputerName $computerName -Credential $credential -ScriptBlock { New-WebAppPool -Name Automate }
 
 ## Yay!
-New-IISWebsite -Name Automate -ApplicationPoolName Automate -ComputerName $computerName -Credential $credential -Verbose
+New-IISWebsite -Name Automate -ApplicationPoolName Automate -ComputerName $computerName -Credential $credential -Verbose -Force
 
 #endregion
