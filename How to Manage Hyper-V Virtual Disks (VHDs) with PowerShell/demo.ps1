@@ -13,7 +13,7 @@ Get-Help New-Vhd -Detailed
 Test-Path -Path 'C:\PowerLab\VHDs\MYVM.vhdx'
 New-Vhd -Path 'C:\PowerLab\VHDs\MYVM-50.vhdx' -SizeBytes 50GB -Dynamic
 New-Vhd -Path 'C:\PowerLab\VHDs\MYVM-10.vhdx' -SizeBytes 10GB -Dynamic
-Test-Path -Path 'C:\PowerLab\VHDs\MYVM.vhdx'
+Test-Path -Path 'C:\PowerLab\VHDs\MYVM-10.vhdx'
 
 ## Diff disks
 New-VHD -Path 'C:\PowerLab\VHDs\MYVM-Diff.vhdx' -ParentPath 'C:\PowerLab\VHDs\MYVM-50.vhdx' -Differencing
@@ -29,7 +29,7 @@ Get-Vhd -Path 'C:\PowerLab\VHDs\MYVM-Diff.vhdx'
 #region Modifying existing VHDs
 
 ## Setting sector size
-Set-VHD -Path 'C:\PowerLab\VHDs\MYVM.vhdx' -PhysicalSectorSizeBytes 512
+Set-VHD -Path 'C:\PowerLab\VHDs\MYVM-50.vhdx' -PhysicalSectorSizeBytes 512
 
 ## Find the diff disk's parent path
 Get-VHD -Path 'C:\PowerLab\VHDs\MYVM-Diff.vhdx' | Select-Object -ExpandProperty ParentPath
@@ -56,14 +56,14 @@ Get-DiffDiskParent -Path 'C:\PowerLab\VHDs\MYVM-Diff-Child.vhdx'
 #endregion
 
 #region Assigning a VHD to the VM
-Get-VM -Name MYVM | Add-VMHardDiskDrive -Path 'C:\PowerLab\VHDs\MYVM.vhdx'
-Get-VM -Name MYVM | Get-VMHardDiskDrive
+Get-VM -Name SRV1 | Add-VMHardDiskDrive -Path 'C:\PowerLab\VHDs\MYVM-50.vhdx'
+Get-VM -Name SRV1 | Get-VMHardDiskDrive
 #endregion
 
 #region Removing VHDs
 
 ## Detach the VHD from the VM
-Get-VM -Name LABDC | Remove-VMHardDiskDrive
+Get-VM -Name SRV1 | Get-VMHardDiskDrive | Remove-VMHardDiskDrive
 
 ## Remove the VHD from disk
 Remove-Item -Path C:\PowerLab\VHDs\foo.vhdx
@@ -124,10 +124,10 @@ function New-LabVhd {
 	}
 }
 
-New-LabVhd -Name MYVM -Verbose -AttachToVm MYVM
+New-LabVhd -Name MYVMVHD -Verbose -AttachToVm SRV1
 
-Get-VM -Name MYVM | Get-VMHardDiskDrive | Remove-VMHardDiskDrive
-New-LabVhd -Name MYVM -Verbose -AttachToVm MYVM
+Get-VM -Name SRV1 | Get-VMHardDiskDrive | Remove-VMHardDiskDrive
+New-LabVhd -Name MYVMVHD -Verbose -AttachToVm SRV1
 
-New-LabVhd -Name MYVM -Verbose -AttachToVm NOEXIST
+ 
 #endregion

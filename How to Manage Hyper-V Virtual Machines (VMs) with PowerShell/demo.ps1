@@ -45,25 +45,37 @@ $vm | Set-VM -ProcessorCount 2 -DynamicMemory
 ## Stopping/starting the VM
 $vm | Stop-VM -Force
 
-$vm | Start-VM -Passthru
+$vm | Start-VM
 ($vm | Get-VM).State
 ($vm | Get-VM).State
+
+$vm | Stop-VM -Force
 
 $vm | Start-VM -Passthru | Wait-Vm -For Heartbeat -Timeout 20
 
-$vm | Restart-Vm -Force
+$vm | Restart-Vm -Force -Passthru
 
 $vm | Suspend-VM
-$vm | Start-VM
+$vm
+$vm | Resume-VM
+$vm
 
 ## Creating snapshots (checkpoints) and restoring
 $vm | Checkpoint-VM
-$vm | Restore-VM
+$vm | Get-VMCheckpoint
+$vm | Get-VMCheckpoint -Name 'SRV2 - (6/26/2018 - 4:52:04 PM)' | Restore-VMCheckpoint -Confirm:$false
 
 ## Exporting/importing VMs
 $vm | Export-Vm -Path 'C:\VMExports'
+Get-ChildItem -Path 'C:\VMExports\SRV2'
+
 $vm | Remove-VM
-Import-VM -Path 'D:\VMExports\5AE40946-3A98-428E-8C83-081A3C6BD18C.XML'
+$vm | Stop-Vm -Force -Passthru | Remove-VM -Force
+Get-VM -Name SRV2
+Get-ChildItem -Path 'C:\VMExports\SRV2'
+
+Import-vm -Path 'C:\VMExports\SRV2\Virtual Machines\780EC369-5086-4B7E-880F-00303F63474E.vmcx'
+Get-VM -Name SRV2
 
 #endregion
 
