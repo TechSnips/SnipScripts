@@ -19,44 +19,34 @@ Outline:
 - Dismounting the ISO file
 - Cleaning up any temporary copied files on the SQL server
 
+Notes:
+
+ - Code is being run from the VM that SQL Server is being installed on (locally)
+
 #>
 
 #region Setup for PS remoting connections
-$computerName = 'xx.xx.xx.xx.xx'
+$computerName = '23.96.10.116'
 $credential = Get-Credential
-$session = New-PSSession -ComputerName $computerName -Credential $credential
+Enter-PSSession -ComputerName $computerName -Credential $credential
 #endregion
 
 #region Creating and copying necessary files to the SQL Server
 
 ## Look at the answer file
-notepad 'C:\SqlServer.ini'
-
-## Copy the SQL server install template file to the remote server
-$copyParams = @{
-	Path        = 'C:\SqlServer.ini'
-	Destination = 'C:\'
-	Session     = $session
-}
-Copy-Item @copyParams
+Get-Content -Path 'C:\SqlServer.ini'
 
 ## Modify the template file for our use using PowerShell
-$scriptBlock = {
-	$configContents = Get-Content -Path 'C:\SqlServer.ini' -Raw
-	$configContents = $configContents.Replace('SQLSVCACCOUNT=""', 'SQLSVCACCOUNT="TechSnipsUser"')
-	$configContents = $configContents.Replace('SQLSVCPASSWORD=""', 'SQLSVCPASSWORD="P@$$w0rd12"')
-	$configContents = $configContents.Replace('SQLSYSADMINACCOUNTS=""', 'SQLSYSADMINACCOUNTS="TechSnipsUser"')
-	Set-Content -Path 'C:\SqlServer.ini' -Value $configContents
-}
-Invoke-Command -ComputerName $computerName -ScriptBlock $scriptBlock -Credential $credential
+$configContents = Get-Content -Path 'C:\SqlServer.ini' -Raw
+$configContents = $configContents.Replace('SQLSVCACCOUNT=""', 'SQLSVCACCOUNT="TechSnipsUser"')
+$configContents = $configContents.Replace('SQLSVCPASSWORD=""', 'SQLSVCPASSWORD="P@$$w0rd12"')
+$configContents = $configContents.Replace('SQLSYSADMINACCOUNTS=""', 'SQLSYSADMINACCOUNTS="TechSnipsUser"')
+Set-Content -Path 'C:\SqlServer.ini' -Value $configContents
 
 ## Look at the answer file on the remote server
-$scriptBlock = {
-	Get-Content -Path 'C:\SqlServer.ini' | Select-String -Pattern 'SQLSVCACCOUNT=|SQLSVCPASSWORD=|SQLSYSADMINACCOUNTS='
-}
-Invoke-Command -ComputerName $computerName -ScriptBlock $scriptBlock -Credential $credential
+Get-Content -Path 'C:\SqlServer.ini' | Select-String -Pattern 'SQLSVCACCOUNT=|SQLSVCPASSWORD=|SQLSYSADMINACCOUNTS='
 
-## Copy the ISO file
+## Copy the ISO file to the soon-to-be SQL server
 $copyParams = @{
 	Path        = 'C:\en_sql_server_2016_standard_x64_dvd_8701871.iso'
 	Destination = 'C:\'
@@ -69,37 +59,24 @@ Copy-Item @copyParams
 
 ## Setup scriptblock and params to Invoke-Command
 
-$icmParams = @{
-	Session      = $session
-	ArgumentList = $tempFile.Name
-	ScriptBlock  = {
-		## Mount the ISO on the remote server
-		$image = Mount-DiskImage -ImagePath 'C:\en_sql_server_2016_standard_x64_dvd_8701871.iso' -PassThru
+## Mount the ISO on the remote server
+$image = Mount-DiskImage -ImagePath 'C:\en_sql_server_2016_standard_x64_dvd_8701871.iso' -PassThru
 		
-		## Figure out what drive letter the ISO was mounted with
-		$installerPath = "$(($image | Get-Volume).DriveLetter):"
+## Figure out what drive letter the ISO was mounted with
+$installerPath = "$(($image | Get-Volume).DriveLetter):"
 
-		## Start the installer passing the answer file copied earlier
-		$null = & "$installerPath\setup.exe" "/CONFIGURATIONFILE=C:\$($using:tempFile.Name)"
+## Start the installer passing the answer file copied earlier
+$null = & "$installerPath\setup.exe" "/CONFIGURATIONFILE=C:\SqlServer.ini"
 
-		## Dismount the mounted ISO
-		$image | Dismount-DiskImage
-	}
-}
-
-## Kick off the command
-Invoke-Command @icmParams
+## Dismount the mounted ISO
+$image | Dismount-DiskImage
 #endregion
 
-#region Clean up temp ISO and answer files copied to the remote server
-$scriptBlock = { Remove-Item -Path 'C:\en_sql_server_2016_standard_x64_dvd_8701871.iso', "C:\$($using:tempFile.Name)" -Recurse -ErrorAction Ignore }
-Invoke-Command -ScriptBlock $scriptBlock -Session $session
-
-## Remove PS Remoting session
-$session | Remove-PSSession
+#region Clean up temp ISO and answer files
+Remove-Item -Path 'C:\en_sql_server_2016_standard_x64_dvd_8701871.iso', "C:\SqlServer.ini"
 #endregion
 
-#region Creating a function to do it all
+#region Creating a function to do it all from your local computer
 
 function Install-SqlServer {
 	param

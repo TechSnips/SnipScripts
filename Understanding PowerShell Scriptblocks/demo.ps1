@@ -10,8 +10,8 @@ Invoke-Command -ScriptBlock $myscriptblock
 #endregion
 
 #region Scriptblock parameters
-$myscriptblock = { param($Number) 1 + $Number }
-& $myscriptblock 3
+$myscriptblock = { param($String,$Number) 1 + $Number; $String }
+& $myscriptblock 'foo' 3
 Invoke-Command -ScriptBlock $myscriptblock -ArgumentList 3
 #endregion
 

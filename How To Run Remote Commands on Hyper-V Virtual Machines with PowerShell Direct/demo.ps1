@@ -13,9 +13,9 @@
 #>
 
 #region Hyper-V host is remote so we'll use "regular" remoting to get into it
-$hyperVHost = 'xx.xx.xx.xx.xx'
+$hyperVHost = '23.96.10.116'
 $hyperVHostCred = Get-Credential
-$session = New-PSSession -ComputerName $hyperVHost -Credential $hyperVHostCred
+Enter-PSSession -ComputerName $hyperVHost -Credential $hyperVHostCred
 
 ## The VMs on our host
 Get-Vm

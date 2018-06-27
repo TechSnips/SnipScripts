@@ -5,12 +5,13 @@
 		- A Hyper-V host
 	Snip suggestions:
 		N/A
+    Notes:
+		I'm on my Hyper-V host now.
+		Ensure to add our own Windows Server product key to the LABDC.XML answer file
 #>
 
-## We are using PowerShell Remoting to connect to the Hyper-V host itself
-
 #region Create the Hyper-V VM
-New-VM -Name LABDC -Path 'C:\PowerLab\VMs' -MemoryStartupBytes 4GB -Switch 'PowerLab' -Generation 
+New-VM -Name LABDC -Path 'C:\PowerLab\VMs' -MemoryStartupBytes 4GB -Switch 'PowerLab' -Generation 2
 #endregion
 
 #region The answer file
@@ -26,9 +27,9 @@ New-VM -Name LABDC -Path 'C:\PowerLab\VMs' -MemoryStartupBytes 4GB -Switch 'Powe
 	- locale to en-US
 	- ComputerName to LABDC
 	- No AutoActivate
-	- Sets static IP to 10.0.0.100
-	- Sets primary DNS to 10.0.0.100
-	- Sets DNS domain lab.local
+	- Sets static IP
+	- Sets primary DNS 
+	- Sets DNS domain
 	- Enables dynamic DNS
 	- Changes administrator password to P@$$w0rd12
 	- Creates local LabUser account
@@ -52,7 +53,7 @@ Available in SnipScripts (LABDC.xml)
 
 ## Define all of the parameters to use for the conversion
 $convertParams = @{
-	SourcePath        = 'C:\PowerLab\ISOs\en_windows_server_2016_x64_dvd_9718492.iso'
+	SourcePath        = 'C:\PowerLab\ISOs\en_windows_server_2016_vl_x64_dvd_11636701.iso'
 	SizeBytes         = 40GB
 	Edition           = 'ServerStandardCore'
 	VHDFormat         = 'VHDX'
@@ -74,3 +75,5 @@ if ($bootOrder[0].BootType -ne 'Drive') {
 	$vm | Set-VMFirmware -FirstBootDevice $vm.HardDrives[0]
 }
 #endregion
+
+## Boot up the VM and cross your fingers!
