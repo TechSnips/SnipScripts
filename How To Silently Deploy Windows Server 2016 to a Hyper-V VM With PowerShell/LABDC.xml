@@ -126,7 +126,7 @@
 					</Ipv6Settings>
 					<Identifier>Ethernet</Identifier>
 					<UnicastIpAddresses>
-						<IpAddress wcm:action="add" wcm:keyValue="1">10.0.17.250</IpAddress>
+						<IpAddress wcm:action="add" wcm:keyValue="1">10.0.17.250/24</IpAddress>
 					</UnicastIpAddresses>
 				</Interface>
 			</Interfaces>
