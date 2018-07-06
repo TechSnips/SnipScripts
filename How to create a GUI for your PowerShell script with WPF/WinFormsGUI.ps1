@@ -1,4 +1,4 @@
-#region demo
+#region demo-
 Throw "This is a demo, dummy!"
 #endregion
 
@@ -14,7 +14,7 @@ Clear-Host
 $path = Read-Host 'Enter the new directory name '
 Test-Path $path
 If(Test-Path $path){
-    Remove-Item $path
+	Remove-Item $path
 }
 Test-Path $path
 
@@ -91,9 +91,9 @@ $folderForm.Controls.Add($selectButton)
 $folderBrowser = New-Object System.Windows.Forms.FolderBrowserDialog
 
 $selectButton.Add_Click({
-    $folderBrowser.ShowDialog()
-    $pathTextBox.Text = $folderBrowser.SelectedPath
-})
+		$folderBrowser.ShowDialog()
+		$pathTextBox.Text = $folderBrowser.SelectedPath
+	})
 
 $pathTextBox.ReadOnly = $true
 
@@ -110,9 +110,9 @@ $pathTextBox = New-Object System.Windows.Forms.TextBox
 $selectButton = New-Object System.Windows.Forms.Button
 $folderBrowser = New-Object System.Windows.Forms.FolderBrowserDialog
 $selectButton.Add_Click({
-    $folderBrowser.ShowDialog()
-    $pathTextBox.Text = $folderBrowser.SelectedPath
-})
+		$folderBrowser.ShowDialog()
+		$pathTextBox.Text = $folderBrowser.SelectedPath
+	})
 $pathTextBox.Location = '23,23'
 $pathTextBox.Size = '150,23'
 $pathTextBox.ReadOnly = $true
@@ -127,12 +127,12 @@ $removeButton = New-Object System.Windows.Forms.Button
 $removeButton.Location = '26,52'
 $removeButton.text = 'Remove'
 $removeButton.Add_Click({
-    If($folderBrowser.SelectedPath){
-        If(Test-Path $folderBrowser.SelectedPath){
-            Remove-Item $folderBrowser.SelectedPath
-        }
-    }
-})
+		If($folderBrowser.SelectedPath){
+			If(Test-Path $folderBrowser.SelectedPath){
+				Remove-Item $folderBrowser.SelectedPath
+			}
+		}
+	})
 
 $folderForm.Controls.Add($removeButton)
 $folderForm.ShowDialog()
@@ -149,9 +149,9 @@ $selectButton = New-Object System.Windows.Forms.Button
 $folderBrowser = New-Object System.Windows.Forms.FolderBrowserDialog
 $removeButton = New-Object System.Windows.Forms.Button
 $selectButton.Add_Click({
-    $folderBrowser.ShowDialog()
-    $pathTextBox.Text = $folderBrowser.SelectedPath
-})
+		$folderBrowser.ShowDialog()
+		$pathTextBox.Text = $folderBrowser.SelectedPath
+	})
 $pathTextBox.Location = '23,23'
 $pathTextBox.Size = '150,23'
 $pathTextBox.ReadOnly = $true
@@ -160,12 +160,12 @@ $selectButton.Location = '196,23'
 $removeButton.Location = '26,52'
 $removeButton.text = 'Remove'
 $removeButton.Add_Click({
-    If($folderBrowser.SelectedPath){
-        If(Test-Path $folderBrowser.SelectedPath){
-            Remove-Item $folderBrowser.SelectedPath
-        }
-    }
-})
+		If($folderBrowser.SelectedPath){
+			If(Test-Path $folderBrowser.SelectedPath){
+				Remove-Item $folderBrowser.SelectedPath
+			}
+		}
+	})
 $folderForm.Controls.Add($pathTextBox)
 $folderForm.Controls.Add($selectButton)
 $folderForm.Controls.Add($removeButton)
@@ -209,19 +209,19 @@ $pathTextBox.ReadOnly = $true
 $selectButton.Text = 'Select'
 $selectButton.Location = '196,23'
 $selectButton.Add_Click({
-    $folderBrowser.ShowDialog()
-    $pathTextBox.Text = $folderBrowser.SelectedPath
-})
+		$folderBrowser.ShowDialog()
+		$pathTextBox.Text = $folderBrowser.SelectedPath
+	})
 
 $removeButton.Location = '26,52'
 $removeButton.text = 'Remove'
 $removeButton.Add_Click({
-    If($folderBrowser.SelectedPath){
-        If(Test-Path $folderBrowser.SelectedPath){
-            Remove-Item $folderBrowser.SelectedPath
-        }
-    }
-})
+		If($folderBrowser.SelectedPath){
+			If(Test-Path $folderBrowser.SelectedPath){
+				Remove-Item $folderBrowser.SelectedPath
+			}
+		}
+	})
 
 $okButton.Text = 'OK'
 $okButton.Location = "56,215"
