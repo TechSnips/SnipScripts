@@ -1,0 +1,12 @@
+﻿
+open sftp://corp%5Cmatt:Tech123@server1/ -hostkey="ssh-ed25519 256 NNocVGHYdi2XoKuuYFvwuvNjISCO0ats4rznYSVa++Y="
+
+lcd C:\Users\matt\Documents
+cd /C:
+
+put SCP
+
+exit
+
+# Execute the script using a command like:
+# "C:\Program Files (x86)\WinSCP\WinSCP.exe" /log="C:\writable\path\to\log\WinSCP.log" /ini=nul /script="C:\path\to\script\script.txt"
