@@ -8,7 +8,7 @@
 		
 	Scenario:
 
-		- File wallpaper.png already uploaed to the /Home/TechSnips/SourceFolder folder in Transfer
+		- File wallpaper.png already uploaded to the /Home/TechSnips/SourceFolder folder in Transfer
 		- Need to move wallpaper.png to /Home/TechSnips/DestinationFolder which is already created
 
 	References:
@@ -38,7 +38,7 @@ $token = $token.access_token
 $headers = @{ 'Authorization' = "Bearer $token" }
 
 ## Find the file id of the wallpaper.png file
-start http://localhost/human.aspx?r=549867013&arg06=497832098&arg12=filelist
+start 'http://localhost/human.aspx?r=549867013&arg06=497832098&arg12=filelist'
 $endpointUrl = "https://$serverName/api/v1/files"
 $file = (Invoke-RestMethod -Headers $headers -Uri $endpointUrl).items | Where-Object {$_.name -eq 'wallpaper.png'}
 $file
@@ -57,7 +57,7 @@ $endpointUrl = "https://$serverName/api/v1/files/$($file.Id)/copy"
 Invoke-RestMethod -Method POST -Headers $headers -Uri $endpointUrl -Body $json -ContentType 'application/json'
 
 ## Browse to the destination folder in the web UI
-start http://localhost/human.aspx?r=1274902781&arg06=497853955&arg12=filelist
+start 'http://localhost/human.aspx?r=1274902781&arg06=497853955&arg12=filelist'
 
 #region Build a PowerShell tool
 
