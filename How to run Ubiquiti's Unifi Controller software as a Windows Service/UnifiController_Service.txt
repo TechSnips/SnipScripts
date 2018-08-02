@@ -1,0 +1,3 @@
+cd "%UserProfile%\Ubiquiti Unifi\"
+java -jar lib\ace.jar installsvc
+java -jar lib\ace.jar startsvc
