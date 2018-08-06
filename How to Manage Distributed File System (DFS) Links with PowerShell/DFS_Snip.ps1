@@ -1,110 +1,163 @@
-﻿# List Pre-Reqs
-<#
-
-1. Windows Server 2008 R2
-2. Distributed File System role service installed   -or-
-3. Remote Server Administration Tools feature > File Services Tools feature with the Distributed File System Tools
+<# 
+Prerequisites for Distributed File System Server Role
+ * Active Directory
+ * File and Storage Services role installed on a Windows Server:
+   * Windows Server (Semi-Annual Channel)
+   * Windows Server 2016
+   * Windows Server 2012 R2
+   * Windows Server 2012
+   * Windows Server 2008 R2 Datacenter/Enterprise
+   * 
+   * 
+Prerequisites for PowerShell cmdlets:
+ * An administrator account with the proper permissions
+ * RSAT Tools with the ‘File Services Tools - DFS Management Tools’ installed 
+     [X] Role Administration Tools 
+         [X] Role Administration Tools 
+             [X] File Services Tools 
+                 [X] DFS Management Tools
 
 #>
 
-#Get a list of all current DFS Namespaces using the "Get-DfsnRoot" command
-
-#region Get-DFSNROOT
-
-$Domain = 'tech.io'
-
-(Get-DfsnRoot -Domain $Domain).Where( {$_.State -eq 'Online'} ) | Select-Object -ExpandProperty Path
-
-#endregion Get-DFSNROOT
-
-#List all DFS Links using the "Get-DfsnFolder" command
-
-#region Get-DFSNFolder
+# Download RSAT
+# https://www.microsoft.com/en-us/download/details.aspx?id=45520
+# Install RSAT DFS Management tools with PowreShell
+Install-WindowsFeature FS-DFS-Namespace, RSAT-DFS-Mgmt-Con
 
 $Domain = 'tech.io'
 
+#region Get-DfsnRoot
+ # Discover all DFS Namespaces in current domain
 (Get-DfsnRoot -Domain $Domain).Where( {$_.State -eq 'Online'} ) | Select-Object -ExpandProperty Path
 
-$DFSRoot = "\\$domain\DFSRoot"
-$AppRoot = "\\$domain\AppRoot"
+#endregion Get-DfsnRoot
 
-    $DFSRootLinks = Get-DfsnFolder -Path $DFSRoot\* | Select-Object -ExpandProperty Path
-    $AppRootLinks = Get-DfsnFolder -Path $AppRoot\* | Select-Object -ExpandProperty Path
+#region Get-DfsnFolder
+# Discover all DFS Links in current NameSpace
+Get-DfsnFolder -Path "\\$Domain\AppRoot\*" | Select-Object -ExpandProperty Path
 
-
-#endregion Get-DFSNFolder
-
-
-#region Get-DfsnFolderTarget
-
-
-$alltargetslisted = [System.Collections.ArrayList]@()
-
-foreach ($AppRootLink in $AppRootLinks)
-    {
-        $allInfo = Get-DfsnFolderTarget -Path $AppRootLink
-        $alltargetslisted.Add($allInfo) | out-null
-    }
-
-$alltargetslisted
-
-#endregion Get-DfsnFolderTarget
-
-#Create a new DFS Link using the "New-DfsnFolder" command
+#endregion Get-DfsnFolder
 
 #region New-DfsnFolder
+# Create a new DFS Folder Name
+# Try/Catch to see if the folder already exists
+    try
+    {
+        Get-DfsnFolderTarget -Path "\\$Domain\AppRoot\PowerShell" -ErrorAction Stop
+    }
+    catch
+    {
+        Write-Host "Path not found. Clear to proceed" -ForegroundColor Green
+    }
 
+    # Splatting the Parameters for the New-DfsnFolder
 $NewDFSFolder = @{
-                 Path = '\\Tech.io\AppRoot\PowerShell'
+                 Path = "\\$Domain\AppRoot\PowerShell"
                  State = 'Online'
-                 TargetPath = '\\FileServer01\FileShare\PowerShell' 
-                 TargetState = 'Online' 
+                 TargetPath = '\\datacenter\FileShare\PowerShell'
+                 TargetState = 'Online'
                  ReferralPriorityClass = 'globalhigh'
                  }
 
 New-DfsnFolder @NewDFSFolder
 
+    # Check that folder now exists:
+        Get-DfsnFolderTarget -Path "\\$Domain\AppRoot\PowerShell"
+
+    # Check that the new DFS Link works using Windows Explorer
+        Invoke-Expression "explorer '\\$Domain\AppRoot\PowerShell\'"
 #endregion New-DfsnFolder
 
-#Update an existing DFS Folder Target using the "New-DfsnFolderTarget" command
-
 #region New-DfsnFolderTarget
-
+# Splat the settings for easy readibility
 $NewTPS = @{
-            Path = '\\Tech.io\AppRoot\PowerShell'
-            TargetPath = '\\datacenter\ReplicatedFileShare\PowerShell'
-            State = 'Online' 
-            }
+    Path = "\\$Domain\AppRoot\PowerShell"
+    TargetPath = '\\FileServer01\FileShare\PowerShell'
+    State = 'Online'
+    }
 
+# Add new folder located on the 'FileServer01' server & set Online
 New-DfsnFolderTarget @NewTPS
 
-$NewTPS = @{
-            Path = '\\Tech.io\AppRoot\_PowerShell'
-            TargetPath = '\\datacenter\ReplicatedFileShare\PowerShell' 
-            State = 'Online' 
-            }
-
-New-DfsnFolderTarget @NewTPS
+# Check that folder now exists:
+Get-DfsnFolderTarget -Path "\\$Domain\AppRoot\PowerShell"
 
 #endregion New-DfsnFolderTarget
 
-#Remove a DFS Folder Target that is no longer required using the "Remove-DfsnFolderTarget"
+#region New-DfsnFolderTarget-Offline
+
+# Splat the settings for easy readibility
+$NewTPS = @{
+    Path = "\\$Domain\AppRoot\PowerShell"
+    TargetPath = '\\FileServer02\FileShare\PowerShell'
+    State = 'Offline'
+    }
+
+# Add new folder located on the 'FileServer02' server & set to Offline
+New-DfsnFolderTarget @NewTPS
+
+# Check that folder now exists:
+Get-DfsnFolderTarget -Path "\\$Domain\AppRoot\PowerShell"
+
+#endregion New-DfsnFolderTarget-Offline
+
+#region Set-DfsnFolderTarget
+# Creates a Folder Target path
+# Splatting the settings where the path pointed at the server named FileServer01
+$ChangeTPsFS1 = @{
+    Path = "\\$Domain\AppRoot\PowerShell"
+    TargetPath = '\\FileServer01\FileShare\PowerShell'
+    State = 'Offline'
+    }
+
+# Set folder located on the server path 'FileServer01' to Offline
+Set-DfsnFolderTarget @ChangeTPsFS1
+
+# Splatting the settings where the path pointed at the server named FileServer02
+$ChangeTPsFS2 = @{
+    Path = "\\$Domain\AppRoot\PowerShell"
+    TargetPath = '\\FileServer02\FileShare\PowerShell'
+    State = 'Online'
+    ReferralPriorityClass = 'globalhigh'
+    }
+
+# Set folder located on the 'FileServer02' server to Online
+Set-DfsnFolderTarget @ChangeTPsFS2
+
+# Splatting the settings where the path pointed at the server named Datacenter
+$ChangeTPsFS3 = @{
+    Path = "\\$Domain\AppRoot\PowerShell"
+    TargetPath = '\\datacenter\FileShare\PowerShell'
+    ReferralPriorityClass = 'sitecostnormal'
+    }
+
+# Change Priority of 'Datacenter' server folder path to 'Normal'
+Set-DfsnFolderTarget @ChangeTPsFS3
+
+# Check folder:
+Get-DfsnFolderTarget -Path "\\$Domain\AppRoot\PowerShell"
+
+#endregion Set-DfsnFolderTarget
 
 #region Remove-DfsnFolderTarget
+# Removes a path from a DFS Folder but does not remove the DFS Folder.
+# Check Target Path to 'FileServer01' server to Offline & Remove the Folder Target Path
+if ((Get-DfsnFolderTarget -Path "\\$Domain\AppRoot\PowerShell"  -TargetPath '\\FileServer01\FileShare\PowerShell').State -eq "Offline")
+{
+    Remove-DfsnFolderTarget -Path "\\$Domain\AppRoot\PowerShell" -TargetPath '\\FileServer01\FileShare\PowerShell' -Force:$true
+}
 
-$DelFTS = @{
-            Path = '\\Tech.io\AppRoot\_PowerShell'
-            TargetPath = '\\THUNDERBLUFF\PowerShell'
-            }
-
-Remove-DfsnFolderTarget @DelFTS -Force:$true
+# Check folder:
+Get-DfsnFolderTarget -Path "\\$Domain\AppRoot\PowerShell"
 
 #endregion Remove-DfsnFolderTarget
 
-#Remove a DFS Folder that is no longer required using the "Remove-DfsnFolder"
-
 #region Remove-DfsnFolder
+# Removes a folder and all its paths
+# Delete the DFS Folder
+Remove-DfsnFolder -Path "\\$Domain\AppRoot\PowerShell" -Force:$true
 
-Remove-DfsnFolder -Path '\\Tech.io\AppRoot\_PowerShell' -Force:$true
+# Final Check
+  Get-DfsnFolderTarget -Path "\\$Domain\AppRoot\PowerShell"
 
 #endregion Remove-DfsnFolder
