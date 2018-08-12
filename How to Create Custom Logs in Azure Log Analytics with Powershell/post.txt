@@ -1,0 +1,30 @@
+$CustomerId = ""
+$SharedKey = ""
+
+
+#Log Analytics REST API documentation provides Powershell, Python and C# examples
+# https://docs.microsoft.com/en-us/azure/log-analytics/log-analytics-data-collector-api
+# This example uses the OMSAPIIngestion Module available on Github and Powershell Gallery
+
+$LogType = "TechSnips" #log in Log Analytics will be TechSnips_CL
+
+$JSON = @"
+    {
+        "title1":  "How To Set Up OpenSSH On Windows",
+        "title2":  "How To Transfer Files Via Secure Copy Protocol (SCP) With WinSCP",
+        "title3":  "How To Search All Event Logs Within A Specific Timeframe With PowerShell",
+        "title4":  "How To Create An Azure SQL Database With PowerShell",
+        "title5":  "How To Find And Delete An Email From All Mailboxes In Office 365 With PowerShell",
+        "title6":  "How To Create An Azure Service Principal Via The Azure CLI 2.0",
+        "title7":  "How To Create A Windows Server Image For Azure With Packer",
+        "title8":  "How To Find And Delete An Email From All Mailboxes In Office 365",
+        "title9":  "How To Manage Resource Mailboxes In Exchange Using PowerShell",
+        "title10":  "How To Enable Nested Virtualization In Hyper-V 2016"
+    }
+"@
+
+$TimeStampField = get-date
+$TimeStampField = $TimeStampField.GetDateTimeFormats(115)
+
+# Submit the data to the API endpoint
+Send-OMSAPIIngestionFile -customerId $customerId -sharedKey $SharedKey -body $json -logType $LogType -TimeStampField $TimeStampField
