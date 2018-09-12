@@ -1,0 +1,2 @@
+$current_env_conn_string = (az storage account show-connection-string -n <storageaccount> -g <resource group> --query 'connectionString' -o tsv)
+az storage share create --name files --quota 100 --connection-string $current_env_conn_string
