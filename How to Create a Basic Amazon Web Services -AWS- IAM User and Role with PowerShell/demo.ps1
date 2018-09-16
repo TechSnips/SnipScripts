@@ -1,23 +1,19 @@
-Set-AWSCredential -AccessKey 'XXXXXXXX' -SecretKey 'XXXXXXXXX'
+## Provide the root user access key and secret key to temporarily authenticate to create the IAM user
+Set-AWSCredential -AccessKey '<root user access key>' -SecretKey '<root user secret key>'
 
-New-IAMUser -UserName AutomateBoringStuff
+## Create a no-frills IAM user
+$iamUserName = 'TechSnips'
+New-IAMUser -UserName $iamUserName
 
-$json = '{
->>     "Version": "2012-10-17",
->>     "Statement": [
->>         {
->>             "Effect": "Allow",
->>             "Principal" : { "AWS": "arn:aws:iam::013223035658:user/AutomateBoringStuff" },
->>             "Action": "sts:AssumeRole"
->>         }
->>     ]
->> }'
-
-New-IAMRole -AssumeRolePolicyDocument $json -RoleName 'AllAccess'
-
+## Find the managed policy called AdministratorAccess' ARN that has access to all AWS services
 $policyArn = (Get-IAMPolicies | where {$_.PolicyName -eq 'AdministratorAccess'}).Arn
-PS> Register-IAMUserPolicy -PolicyArn $policyArn -UserName AutomateBoringStuff
 
+## Attach the AdministratorAccess policy to the user we just created
+Register-IAMUserPolicy -PolicyArn $policyArn -UserName AutomateBoringStuff
+
+## Create a new IAM access and secret key for the user
 $key = New-IAMAccessKey -UserName AutomateBoringStuff
 
+## Authenticate to your AWS account using the newly created access key and secret access key. This time, storing it
+## as the default keys so it will keep even across PowerShell sessions
 Set-AWSCredential -AccessKey $key.AccessKeyId -SecretKey $key.SecretAccessKey -StoreAs 'Default'
