@@ -1,3 +1,5 @@
+#requires -Module AWSPowerShell
+
 ## Provide the root user access key and secret key to temporarily authenticate to create the IAM user
 Set-AWSCredential -AccessKey '<root user access key>' -SecretKey '<root user secret key>'
 
