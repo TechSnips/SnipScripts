@@ -35,14 +35,14 @@ function New-AWSBeanstalkApp {
 	)
 
 	try {
-    ## Check to see if the application exists or not. If not, create a new one
+    		## Check to see if the application exists or not. If not, create a new one
 		if (-not ($ebApp = Get-EBApplication -ApplicationName $ApplicationName)) {
 			$ebApp = New-EBApplication -ApplicationName $ApplicationName -Description $Description
 		} else {
 			Write-Verbose -Message "The BeanStalk application [$($ApplicationName)] already exists."
 		}
 		
-    ## Check to see if the environment has been created or not. If not, create it.
+    		## Check to see if the environment has been created or not. If not, create it.
 		$params = @{
 			ApplicationName = $ApplicationName
 		}
@@ -50,8 +50,8 @@ function New-AWSBeanstalkApp {
 			$null = New-EBEnvironment @params -EnvironmentName $_ -SolutionStackName $EnvironmentType -Tier_Type Standard -Tier_Name WebServer
 		}
 		
-    ## Begin monitoring the environment deployment checking the Health property every minute to see if it's Green
-    ## Once it's green, continue on with the function
+    		## Begin monitoring the environment deployment checking the Health property every minute to see if it's Green
+    		## Once it's green, continue on with the function
 		$stopwatch = [system.diagnostics.stopwatch]::StartNew()
 		if (@(Get-EBEnvironment -ApplicationName $ApplicationName -EnvironmentName $CreateEnvironmentName).where({ $_.Health -ne 'Green'})) {
 			while (($stopwatch.Elapsed.TotalMinutes -lt $WaitForEnvironment) -and (Get-EBEnvironment -ApplicationName $ApplicationName -EnvironmentName $CreateEnvironmentName).where({ $_.Health -ne 'Green'})) {
@@ -85,7 +85,7 @@ function New-AWSBeanstalkApp {
 		}
 		$null = New-EBApplicationVersion @newVerParams
   
-    ## Deploy the new version of the application to the environment and wait for the health to turn Green again
+    		## Deploy the new version of the application to the environment and wait for the health to turn Green again
 		$null = Update-EBEnvironment -ApplicationName $ApplicationName -EnvironmentName $DeployToEnvironmentName -VersionLabel $verLabel -Force
 		$stopwatch = [system.diagnostics.stopwatch]::StartNew()
 		while (($stopwatch.Elapsed.TotalMinutes -lt $WaitForEnvironment) -and (Get-EBEnvironment -ApplicationName $ApplicationName -EnvironmentName $DeployToEnvironmentName).where({ $_.Health -ne 'Green'})) {
@@ -102,7 +102,7 @@ function New-AWSBeanstalkApp {
 	} catch {
 		$PSCmdlet.ThrowTerminatingError($_)
 	} finally {
-    ## Clean up the temporary ZIP file that was created
+    		## Clean up the temporary ZIP file that was created
 		if (Get-Variable -Name pkgZipPath -ErrorAction Ignore) {
 			Remove-Item -Path $pkgZipPath -Force -ErrorAction Ignore
 		}
