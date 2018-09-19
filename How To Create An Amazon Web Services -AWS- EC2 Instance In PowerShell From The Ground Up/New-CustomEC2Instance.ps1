@@ -21,7 +21,6 @@ function New-CustomEC2Instance {
 
 		[Parameter(Mandatory)]
 		[ValidateNotNullOrEmpty()]
-		[ValidateSet('','')]
 		[string]$SubnetAvailabilityZone,
 
 		[Parameter()]
