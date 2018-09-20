@@ -88,3 +88,10 @@ $params = @{
 New-EC2Instance @params
 
 #endregion
+
+#region Custom function to wrap all of this up
+
+## All code we've been doing has been packed up into a neat function called New-CustomEC2Instance
+## Open the script
+
+#endregion
