@@ -41,12 +41,12 @@ $scriptBlock = {
     $ErrorActionPreference = 'Stop'
 
     try {
-		## Find all sessions matching the specified username
-		$whereFilter = {'*'}
-		if ($using:UserName) {
-			$whereFilter = [scriptblock]::Create("`$_ -match '$using:UserName'")
-		}
-		$sessions = quser | Where-Object $whereFilter
+	## Find all sessions matching the specified username
+	$whereFilter = {'*'}
+	if ($using:UserName) {
+		$whereFilter = [scriptblock]::Create("`$_ -match '$using:UserName'")
+	}
+	$sessions = quser | Where-Object $whereFilter
 		
         ## Parse the session IDs from the output
         $sessionIds = ($sessions -split ' +')[2]
