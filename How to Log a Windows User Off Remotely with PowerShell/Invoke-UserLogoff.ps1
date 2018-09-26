@@ -37,23 +37,32 @@ param
 	[string]$UserName
 )
 
-$ErrorActionPreference = 'Stop'
+$scriptBlock = {
+    $ErrorActionPreference = 'Stop'
 
-foreach ($c in $ComputerName) {
-	## Find the user's session ID
-	$compArgs = "/server:$c"
-	$whereFilter = { '*' }
-	if ($PSBoundParameters.ContainsKey('UserName')) {
-		$whereFilter = [scriptblock]::Create("`$_ -match '$UserName'")
-	}
-	if ($sessions = ((quser $compArgs | Where-Object $whereFilter))) {
-		$sessionIds = ($sessions -split ' +')[2]
-		if ($PSCmdlet.ShouldProcess("UserName: $UserName", 'Logoff')) {
-			$sessionIds | ForEach-Object {
-				logoff $_ $compArgs
-			}
+    try {
+		## Find all sessions matching the specified username
+		$whereFilter = {'*'}
+		if ($using:UserName) {
+			$whereFilter = [scriptblock]::Create("`$_ -match '$using:UserName'")
 		}
-	} else {
-		Write-Verbose -Message 'No users found matching criteria found.'
-	}
+		$sessions = quser | Where-Object $whereFilter
+		
+        ## Parse the session IDs from the output
+        $sessionIds = ($sessions -split ' +')[2]
+        Write-Verbose -Message "Found $(@($sessionIds).Count) user login(s) on computer."
+        ## Loop through each session ID and pass each to the logoff command
+        $sessionIds | ForEach-Object {
+            Write-Verbose -Message "Logging off session id [$($_)]..."
+            logoff $_
+        }
+    } catch {
+        if ($_.Exception.Message -match 'No user exists') {
+            Write-Verbose -Message "The user [$($using:UserName)] is not logged in."
+        } else {
+            throw $_.Exception.Message
+        }
+    }
 }
+
+Invoke-Command -ComputerName $ComputerName -ScriptBlock $scriptBlock
