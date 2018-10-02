@@ -132,8 +132,8 @@ function Connect-TechSnipsVm {
 		$vm = Get-AzureRmVM -Status | where { $_.name -eq $Name}
 		if ($vm.powerstate -ne 'VM running') {
 			Write-Verbose -Message 'VM is not running yet. Starting up...'
-			$vm | Start-AzureRmVm
-			Wait-AzureRmVmState -VM $vm -DesiredState 'running'
+			$null = $vm | Start-AzureRmVm
+			Wait-AzureRmVmState -VM $vm -DesiredState 'VM running'
 		} else {
 			Write-Verbose -Message 'VM is already running.'
 		}
