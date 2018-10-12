@@ -1,0 +1,11 @@
+ssh -i 'd:\techsnip\test.pem' ec2-user@xxx.xxx.xxx.xxx
+
+sudo mkdir efs
+
+df -h 
+
+sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport <dns aws efs>:/ efs
+
+df -h
+
+sudo dd if=/dev/zero of=~/efs/1GiB bs=1M count=1024 status=progress
