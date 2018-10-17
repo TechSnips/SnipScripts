@@ -1,0 +1,8 @@
+# Check for presence & version of snap
+snap version
+
+# Install PowerShell Core, uing --classic to disable security confinement
+sudo snap install powershell --classic
+
+# Launch PowerShell Core
+$ pwsh
