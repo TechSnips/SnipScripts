@@ -34,6 +34,7 @@ try {
 	if (-not (Test-Path -Path $CsvFilePath -PathType Leaf)) {
 		throw "The CSV file [$($CsvFilePath)] could not be found."
 	}
+	Add-Type -AssemblyName 'System.Web'
 	Import-Csv -Path $CsvFilePath | foreach {
 		Write-Verbose -Message 'Generating random password...'
 		$password = [System.Web.Security.Membership]::GeneratePassword((Get-Random -Minimum 20 -Maximum 32), 3)
