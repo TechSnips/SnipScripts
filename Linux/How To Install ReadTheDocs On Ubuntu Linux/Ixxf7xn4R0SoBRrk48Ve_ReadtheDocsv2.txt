@@ -1,0 +1,42 @@
+#Prerequisites
+Ubuntu Server v18.04 VM
+OpenSSH ( installed by default on Ubuntu)
+OpenSSH client ( Included in the Windows 10 Linux Subsystem)
+
+#Open BASH Shell ctrl+P + >
+
+# SSH to server
+ssh jbc@139.169.220.116
+
+#add repository
+sudo apt-add-repository universe
+
+#install Pre-requisties 
+sudo apt-get install build-essential
+sudo apt-get install python-dev python-pip python-setuptools
+sudo apt-get install libxml2-dev libxslt1-dev zlib1g-dev
+
+#install cache server
+sudo apt-get install redis-server
+pip install --upgrade pip
+
+#install vertualenv
+sudo apt install virtualenv
+virtualenv rtd
+cd rtd
+source bin/activate
+
+#Clone RTD repository
+mkdir checkouts
+cd checkouts
+git clone https://github.com/rtfd/readthedocs.org.git
+
+#Setup readthedocs
+cd readthedocs.org
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py createsuperuser
+python manage.py collectstatic
+python manage.py loaddata test_data
+
+python manage.py runserver
