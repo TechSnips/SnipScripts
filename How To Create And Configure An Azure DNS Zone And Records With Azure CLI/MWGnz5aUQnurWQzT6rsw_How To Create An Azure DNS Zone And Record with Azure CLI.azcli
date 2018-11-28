@@ -1,0 +1,14 @@
+
+az group create --name DNSZones --location "westeurope"
+
+az network dns zone create -g DNSZones -n domain.com
+
+az network dns zone list
+
+az network dns record-set a add-record -g DNSZones -z domain.com -n www -a 10.10.10.10
+
+az network dns record-set cname set-record -g DNSZones -z domain.com -n ww -c www.domain.com
+
+az network dns record-set cname remove-record -g DNSZones -z domain.com -n ww -c ww.domain.com
+
+az group delete --name DNSZones
