@@ -1,0 +1,12 @@
+
+az vm list
+
+az lock create --name DelLock --lock-type CanNotDelete --resource-group rg-we-TestVMs --resource-name TestVM1 --resource-type Microsoft.Compute/virtualMachines
+
+az lock list
+
+az lock list --resource-group rg-we-TestVMs
+
+$vmlock=$(az lock show --name DelLock --resource-group rg-we-TestVMs --resource-name TestVM1 --resource-type Microsoft.Compute/virtualMachines --output tsv --query id)
+
+az lock delete --ids $vmlock
