@@ -1,0 +1,1 @@
+invoke-command -computername AVMA1 -scriptblock {cscript c:\windows\system32\slmgr.vbs /ipk DBGBW-NPF86-BJVTX-K3WKJ-MTB6V}

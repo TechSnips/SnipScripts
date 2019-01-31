@@ -1,0 +1,26 @@
+#Basic Commands
+http://www.tcpdump.org/
+
+#Install
+sudo apt-get install
+
+#List Interfaces
+sudo tcpdump -D
+
+#Very Verbose output
+sudo tcpd -vv
+
+#Hexadecimal output
+sudo tcpdump -vvX
+
+#Protocal 
+sudo tcpsump icmp
+
+#Port
+sudo tcpdump port -3389
+
+#Write to file
+sudo tcpdump -w capture_file
+
+#read from file
+sudo tcpdump -r capture_file

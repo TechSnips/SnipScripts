@@ -1,0 +1,23 @@
+# How to use the Copy (cp) command in a Linux Bash shell
+
+# Basic syntax
+
+cp [options] Source Destination
+
+# Scenario 1 - You have file you want to copy to another folder
+
+cp myfile ../DestinationPath
+
+# Scenario 2 - You believe you have updated myfile with new info, 
+# but not 100% sure that the file was copied to a backup location 
+# with those updates. 
+
+cp --update myfile ../DestinationPath
+
+# Scenario 3 - You need to copy files and folders including the folder contents.
+
+cp --recursive Source/ ../DestinationPath
+
+# Learn more about cp command
+
+man cp 
