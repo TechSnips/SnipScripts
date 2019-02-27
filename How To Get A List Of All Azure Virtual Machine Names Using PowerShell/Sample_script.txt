@@ -1,0 +1,13 @@
+#Login to Azure
+
+Login-AzureRmAccount
+
+#Declare Variable
+$RPMSubscriptions = Get-AzureRmSubscription
+
+#Foreach Statement
+foreach ($RPMSubscription in $RPMSubscriptions)
+{
+    Set-AzureRmContext -Subscription $RPMSubscription
+    Get-AzureRmVM | Out-File -Append -FilePath "c:\users\rmorales\documents\psscript\$RPMSubscription.txt"
+}
