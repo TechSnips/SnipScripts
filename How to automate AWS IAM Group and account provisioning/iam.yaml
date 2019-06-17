@@ -1,0 +1,55 @@
+AWSTemplateFormatVersion: 2010-09-09
+Parameters:
+  OneTimePassword:
+    Type: String
+    Description: Username for new IAM user
+Resources:
+  accountantsGroup:
+    Type: AWS::IAM::Group
+    Properties: 
+      GroupName: Accountants
+
+  taxDataAccess:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: taxDataAccess
+      Groups: 
+        - !Ref accountantsGroup
+      PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+              - s3:GetAccountPublicAccessBlock
+              - s3:GetBucketAcl
+              - s3:GetBucketLocation
+              - s3:GetBucketPolicyStatus
+              - s3:GetBucketPublicAccessBlock
+              - s3:ListAllMyBuckets
+            Resource: "*"
+          - Effect: Allow
+            Action: s3:listBucket
+            Resource: arn:aws:s3:::myorgaccounting
+          - Effect: Allow
+            Action: s3:*
+            Resource: arn:aws:s3:::myorgaccounting/*
+
+  exampleuser1:
+    Type: AWS::IAM::User
+    Properties:
+      UserName: exampleuser1
+      Groups: 
+      - !Ref accountantsGroup
+      LoginProfile: 
+        Password: 
+          Ref: OneTimePassword
+        PasswordResetRequired: true
+        
+  exampleUser2:
+    Type: AWS::IAM::User
+    Properties:
+      UserName: exampleUser2
+      LoginProfile: 
+        Password: 
+          Ref: OneTimePassword
+        PasswordResetRequired: true
