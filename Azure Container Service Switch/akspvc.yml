@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pvc-demo
+spec:
+  capacity:
+    storage: 5Gi
+  storageClassName: default
+  azureDisk:
+    kind: Managed
+    diskName: pvc449518269002_disk
+    diskURI: /subscriptions/<subscriptionname>/resourceGroups/<rgname>/providers/Microsoft.Compute/disks/pvc449518269002_disk
+    fsType: ext4
+  accessModes:
+  - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  claimRef:
+    name: demo-pvc
+    namespace: default
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: demo-pvc
+  annotations:
+    volume.beta.kubernetes.io/storage-class: default
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: default
